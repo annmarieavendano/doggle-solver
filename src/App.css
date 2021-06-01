@@ -1,0 +1,43 @@
+html, body, section, div 
+{
+  height: 100vh;
+}
+
+body
+{
+  color: #fff;
+  font-family: sans-serif;
+  font-size: 1.25rem;
+  line-height: 100%;
+  text-shadow: 0 2px 2px #a75900;
+}
+
+h1
+{
+  font-size: 1.75rem;
+  text-align: left;
+  margin-left: 10%;
+}
+
+.container 
+{
+  display: grid;
+}
+
+.left-half
+{
+  background: darkslategrey;
+  grid-column: 1;
+}
+
+.right-half
+{
+  background: darkslategrey;
+  grid-column: 2;
+}
+
+.logo
+{
+  align-self: auto;
+  margin-left: 5%;
+}
