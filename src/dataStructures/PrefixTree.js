@@ -30,7 +30,34 @@ export default class PrefixTree
         }
 
         // mark at end
-        //current.isAtEnd = true;
+        current.isAtEnd = true;
+    }
+
+    search = (key) =>
+    {
+        if (key == null)
+        {
+            return;
+        }
+
+        let current = this.root;
+        for (let i = 0; i < key.length; ++i)
+        {
+            // if doesn't contain key add it
+            let index = key[i];
+            if (current.next.get(index) !== undefined)
+            {
+                // go to next node
+                current = current.next.get(index);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        // mark at end
+        return current.isAtEnd; 
     }
 }
 
@@ -42,14 +69,4 @@ class PrefixTreeNode
         this.isAtEnd = false;
     }
 }
-
-// set up our prefix tree
-/*let dictionary = require("../data/dictionary.json");
-let prefixTree = new PrefixTree();
-
-// add dictionary to prefix tree
-for (let i = 0; i < dictionary.length; ++i)
-{
-    prefixTree.add(dictionary[i]);
-}*/
 

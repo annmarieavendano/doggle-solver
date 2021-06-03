@@ -6,10 +6,10 @@ import React, { useEffect } from 'react';
 function App() 
 {
   // only run once
-  useEffect(() =>
+  /*useEffect(() =>
   {
     DoggleBoard.init();  
-  }, [])
+  }, [])*/
 
   return (
     <div className="container">

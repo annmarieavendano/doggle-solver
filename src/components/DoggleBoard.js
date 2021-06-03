@@ -5,6 +5,8 @@ import PrefixTree from '../dataStructures/PrefixTree';
 
 // for 4x4 standard boggle board
 const boardSizeDimension = 4;
+const minWordSize = 3;
+let initialized = false;
 
 // handles cells and doggle(boggle don't sure me) solving
 export default class DoggleBoard extends React.Component
@@ -15,18 +17,17 @@ export default class DoggleBoard extends React.Component
 
         this.state = 
         {
-            prefixTree: null,
+            prefixTree: new PrefixTree(),
             board: Array(boardSizeDimension).fill("").map(row => new Array(boardSizeDimension).fill("")),
-            usedLetters: Array(boardSizeDimension).fill(false).map(row => new Array(boardSizeDimension).fill(false)),
-            isSolving: false,
+            usedLetters: Array(boardSizeDimension).fill(false).map(row => new Array(boardSizeDimension).fill(false))
         }
     }
 
-    static init = () => 
+    init = () => 
     {
         // init prefix tree
         let dictionary = require("../data/dictionary.json");
-        let tempPrefixTree = new PrefixTree();
+        let tempPrefixTree = this.state.prefixTree;
 
         // add dictionary to prefix tree
         for (let i = 0; i < dictionary.length; ++i)
@@ -34,10 +35,10 @@ export default class DoggleBoard extends React.Component
             tempPrefixTree.add(dictionary[i]);
         }
 
-        this.setState = 
+        this.setState(  
         {
             prefixTree: tempPrefixTree,
-        };
+        });
     }
     
     onStartDoggleBoard = (event) => 
@@ -73,25 +74,80 @@ export default class DoggleBoard extends React.Component
                 board: doggleBoard
             });
 
-            // TODO start solving!!
-            this.solveDoggleBoard();
+            // read our dictionary - better place for this
+            if (!initialized)
+            {
+                this.init();
+                initialized = true;
+            }
 
-            // set used letters as selected
+            // solve our board
+            this.solve();
         }
     }
 
+    // our main solving fucntion
     solve = () =>
     {
-        // main solving function
+        for (let i = 0; i < boardSizeDimension; ++i)
+        {
+            for (let j = 0; j < boardSizeDimension; ++j)
+            {
+                this.solveDoggleBoard("", i, j);
+            }
+        }
+
+        console.log(`done`);
     }
 
-    solveDoggleBoard = () =>
+    // recursive solving function
+    solveDoggleBoard = (current, row, column) =>
+    {        
+        let word = current + this.state.board[row][column];
+
+        if (word.length >= minWordSize)
+        {
+            if (this.state.prefixTree.search(word))
+            {
+                console.log(`word found: ${word}`);
+            }
+        }
+
+        // solve in all directions
+        for (let i = -1; i <= 1; ++i)
+        {
+            for (let j = -1; j <= 1; ++j)
+            {
+                if ((row + i >= 0 && row + i < boardSizeDimension) &&
+                (column + j >= 0 && column + j < boardSizeDimension))
+                {
+                    // check if current letter is being used, if so skip to next
+                    if (this.state.usedLetters[row + i][column + j])
+                    {
+                        continue;
+                    }
+
+                    // set state
+                    this.setUsedLetters(row + i, column + j, true);
+                    this.solveDoggleBoard(word, row + i, column + j);
+                    this.setUsedLetters(row + i, column + j, false);
+                }
+            }
+        }
+    }
+
+    // update letters that have been used in board
+    setUsedLetters = (row, column, value) =>
     {
-        // recursive solve
-
+        let used = this.state.usedLetters;     
+        used[row][column] = value;
+        this.setState( 
+        {
+            usedLetters: used
+        });
     }
 
-    renderCell(row, column) 
+    renderCell = (row, column) => 
     {
         let select = this.state.usedLetters[row][column];
         return <DoggleBoardCell value={this.state.board[row][column]} isSelected={select}/>;
