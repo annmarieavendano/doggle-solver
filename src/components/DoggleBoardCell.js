@@ -17,6 +17,6 @@ export default class DoggleBoardCell extends React.Component
     {
         // change look if this is the current selected letter
         const isCurrentlySelected = this.props.isSelected ? "flex-itemSelected " : "flex-item";
-        return (<li class={isCurrentlySelected}>{this.props.value}</li>);
+        return (<li className={isCurrentlySelected}>{this.props.value}</li>);
     }
 }
